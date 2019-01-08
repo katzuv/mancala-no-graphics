@@ -16,7 +16,8 @@ class Board:
         """
         upper_row = '\t '.join(str(pit) for pit in self._upper_pits)
         lower_row = '\t '.join(str(pit) for pit in self._lower_pits)
-        return f'{upper_row}\n{lower_row}\nUp store: {self._up_store}, Down store: {self._down_store}'''
+        return f
+        '{upper_row}\n{lower_row}\nUp store: {self._up_store}, Down store: {self._down_store}'''
 
     def _is_game_over(self) -> bool:
         """
@@ -44,21 +45,33 @@ class Board:
                 store_addition += 1
                 amount -= 1
                 if amount == 0:  # If the last stone fell in the player's store, they are granted an additional turn
-                    self.extra_turn = True
-                else:
-                    self.extra_turn = False
-                break
-
+                    break
             all_pits[index] += 1
             index += 1
             amount -= 1
             if index == 12:
                 index = 0
 
+        self._update_pits(all_pits)
+
+        if self.is_pit_empty(player, index):
+            amount = self._upper_pits[index] + self._lower_pits[index]
+            self._upper_pits[index] = 0
+            self._lower_pits[index] = 0
+            store_addition += amount
+
+        if amount == 0:  # If the last stone fell in the player's store, they are granted an additional turn
+            self.extra_turn = True
+        else:
+            self.extra_turn = False
+
         if player == 'upper':
             self._up_store += store_addition
         else:
             self._down_store += store_addition
+        self._update_pits(all_pits)
+
+    def _update_pits(self, all_pits):
         self._upper_pits = all_pits[:len(all_pits) // 2]
         self._lower_pits = all_pits[len(all_pits) // 2:]
 
