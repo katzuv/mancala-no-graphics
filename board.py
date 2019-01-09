@@ -1,6 +1,3 @@
-import itertools
-
-
 class Board:
     def __init__(self):
         """Instantiate a Mancala board."""
@@ -75,6 +72,8 @@ class Board:
         else:
             self._lower_store += store_addition
         self._update_pits(all_pits)
+        if player == 'lower':
+            self._upper_pits, self._lower_pits = self._lower_pits, self._upper_pits
 
     def _update_pits(self, all_pits):
         self._upper_pits = all_pits[:len(all_pits) // 2]
@@ -87,8 +86,9 @@ class Board:
 
 def play():
     board = Board()
-    for player in itertools.cycle(('upper', 'lower')):
-        if board.extra_turn:
+    player = 'lower'
+    while True:
+        if not board.extra_turn:
             player = 'upper' if player == 'lower' else 'lower'
         while True:
             print(' '.join(f'{i}\t' for i in range(1, 7)))
@@ -103,14 +103,14 @@ def play():
                 print(f'{pit_number} is not a number')
                 continue
             if not (0 <= pit_number <= 5):
-                print(f'Cell number {pit_number + 1} is out of bounds')
+                print(f'Pit number {pit_number + 1} is out of bounds')
                 continue
             if board.is_pit_empty(player, pit_number):
-                print(f'Cell number {pit_number + 1} is empty')
+                print(f'Pit number {pit_number + 1} is empty')
                 continue
             break
         if board.move(player, pit_number):
-            print('game over')
+            print(f'{board.winner().capitalize()} won!')
             return
         print()
 
