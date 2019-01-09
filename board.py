@@ -6,8 +6,8 @@ class Board:
         """Instantiate a Mancala board."""
         self._upper_pits = [4] * 6
         self._lower_pits = [4] * 6
-        self._up_store = 0
-        self._down_store = 0
+        self._upper_store = 0
+        self._lower_store = 0
         self.extra_turn = False
 
     def __str__(self) -> str:
@@ -16,8 +16,7 @@ class Board:
         """
         upper_row = '\t '.join(str(pit) for pit in self._upper_pits)
         lower_row = '\t '.join(str(pit) for pit in self._lower_pits)
-        return f
-        '{upper_row}\n{lower_row}\nUp store: {self._up_store}, Down store: {self._down_store}'''
+        return f'{upper_row}\n{lower_row}\nUp store: {self._upper_store}, Down store: {self._lower_store}'''
 
     def _is_game_over(self) -> bool:
         """
@@ -28,7 +27,13 @@ class Board:
         return all(pit == 0 for pit in self._lower_pits)
 
     def move(self, player, pit_number):
-        return self._deposit(player, pit_number)
+        self._deposit(player, pit_number)
+        return self._is_game_over()
+
+    def winner(self):
+        upper_sum = sum(self._upper_pits) + self._upper_store
+        lower_sum = sum(self._lower_pits) + self._lower_store
+        return 'upper' if upper_sum > lower_sum else 'lower'
 
     def _deposit(self, player, pit_number):
         player_pits = self._upper_pits
@@ -54,21 +59,21 @@ class Board:
 
         self._update_pits(all_pits)
 
-        if self.is_pit_empty(player, index):
+        if 0 <= index <= 5 and self.is_pit_empty(player, index):
             amount = self._upper_pits[index] + self._lower_pits[index]
             self._upper_pits[index] = 0
             self._lower_pits[index] = 0
             store_addition += amount
 
-        if amount == 0:  # If the last stone fell in the player's store, they are granted an additional turn
+        if index == 6:  # If the last stone fell in the player's store, they are granted an additional turn
             self.extra_turn = True
         else:
             self.extra_turn = False
 
         if player == 'upper':
-            self._up_store += store_addition
+            self._upper_store += store_addition
         else:
-            self._down_store += store_addition
+            self._lower_store += store_addition
         self._update_pits(all_pits)
 
     def _update_pits(self, all_pits):
@@ -76,7 +81,7 @@ class Board:
         self._lower_pits = all_pits[len(all_pits) // 2:]
 
     def is_pit_empty(self, player: str, pit_number: int) -> bool:
-        pits = self._upper_pits if player == 'upper' else 'lower'
+        pits = self._upper_pits if player == 'upper' else self._lower_pits
         return pits[pit_number] == 0
 
 
@@ -107,7 +112,7 @@ def play():
         if board.move(player, pit_number):
             print('game over')
             return
-        print('\n')
+        print()
 
 
 if __name__ == '__main__':
