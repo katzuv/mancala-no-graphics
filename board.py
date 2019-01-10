@@ -11,9 +11,10 @@ class Board:
         """
         :return: a string describing the current board
         """
+        numbers_row = ' '.join(f'{i}\t' for i in range(1, 7))
         upper_row = '\t '.join(str(pit) for pit in self._upper_pits)
         lower_row = '\t '.join(str(pit) for pit in self._lower_pits)
-        return f'{upper_row}\n{lower_row}\nUp store: {self._upper_store}, Down store: {self._lower_store}'''
+        return f'{numbers_row}\n{upper_row}\n{lower_row}\nUp store: {self._upper_store}, Down store: {self._lower_store}'''
 
     def _is_game_over(self) -> bool:
         """
@@ -30,7 +31,11 @@ class Board:
     def winner(self):
         upper_sum = sum(self._upper_pits) + self._upper_store
         lower_sum = sum(self._lower_pits) + self._lower_store
-        return 'upper' if upper_sum > lower_sum else 'lower'
+        if upper_sum > lower_sum:
+            return 'upper'
+        elif lower_sum > upper_sum:
+            return 'lower'
+        return 'tie'
 
     def _deposit(self, player, pit_number):
         player_pits = self._upper_pits
@@ -47,7 +52,10 @@ class Board:
                 store_addition += 1
                 amount -= 1
                 if amount == 0:  # If the last stone fell in the player's store, they are granted an additional turn
+                    self.extra_turn = True
                     break
+                else:
+                    self.extra_turn = False
             all_pits[index] += 1
             index += 1
             amount -= 1
@@ -55,17 +63,14 @@ class Board:
                 index = 0
 
         self._update_pits(all_pits)
+        player_pits = all_pits[:len(all_pits) // 2]
 
-        if 0 <= index <= 5 and self.is_pit_empty(player, index):
+        index -= 1
+        if 0 <= index <= 5 and player_pits[index] == 1:
             amount = self._upper_pits[index] + self._lower_pits[index]
             self._upper_pits[index] = 0
             self._lower_pits[index] = 0
             store_addition += amount
-
-        if index == 6:  # If the last stone fell in the player's store, they are granted an additional turn
-            self.extra_turn = True
-        else:
-            self.extra_turn = False
 
         if player == 'upper':
             self._upper_store += store_addition
@@ -88,31 +93,54 @@ def play():
     board = Board()
     player = 'lower'
     while True:
-        if not board.extra_turn:
-            player = 'upper' if player == 'lower' else 'lower'
-        while True:
-            print(' '.join(f'{i}\t' for i in range(1, 7)))
-            print(board)
-            pit_number = input(f'{player.capitalize()} player, enter pit number: ')
-            if '.' in pit_number:
-                print('Dots are not supported')
-                continue
-            try:
-                pit_number = int(pit_number) - 1
-            except ValueError:
-                print(f'{pit_number} is not a number')
-                continue
-            if not (0 <= pit_number <= 5):
-                print(f'Pit number {pit_number + 1} is out of bounds')
-                continue
-            if board.is_pit_empty(player, pit_number):
-                print(f'Pit number {pit_number + 1} is empty')
-                continue
-            break
+        player = swap_players_if_needed(board, player)
+        pit_number = get_player_choice(board, player)
         if board.move(player, pit_number):
-            print(f'{board.winner().capitalize()} won!')
+            winner = board.winner().capitalize()
+            if winner != 'tie':
+                print(f'{winner} won!')
+            else:
+                print('Both players have the same amount of stones, tie.')
             return
         print()
+
+
+def get_player_choice(board: Board, player: str):
+    """
+    :param board: current board
+    :param player: player who played in the last move
+    :return: player choice of pit number
+    """
+    while True:
+        print(board)
+        pit_number = input(f'{player.capitalize()} player, enter pit number: ')
+        if '.' in pit_number:
+            print('Dots are not supported')
+            continue
+        try:
+            pit_number = int(pit_number) - 1
+        except ValueError:
+            print(f'{pit_number} is not a number')
+            continue
+        if not (0 <= pit_number <= 5):
+            print(f'Pit number {pit_number + 1} is out of bounds')
+            continue
+        if board.is_pit_empty(player, pit_number):
+            print(f'Pit number {pit_number + 1} is empty')
+            continue
+        break
+    return pit_number
+
+
+def swap_players_if_needed(board: Board, player: str) -> str:
+    """
+    :param board: current board
+    :param player: player who played in the last move
+    :return: the player in the next move
+    """
+    if not board.extra_turn:
+        player = 'upper' if player == 'lower' else 'lower'
+    return player
 
 
 if __name__ == '__main__':
