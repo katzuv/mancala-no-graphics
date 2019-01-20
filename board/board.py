@@ -88,6 +88,9 @@ class Board:
         pits = self._upper_pits if player == 'upper' else self._lower_pits
         return pits[pit_number] == 0
 
+    def representation(self):
+        pass
+
 
 def play():
     board = Board()
@@ -104,43 +107,6 @@ def play():
             return
         print()
 
-
-def get_player_choice(board: Board, player: str):
-    """
-    :param board: current board
-    :param player: player who played in the last move
-    :return: player choice of pit number
-    """
-    while True:
-        print(board)
-        pit_number = input(f'{player.capitalize()} player, enter pit number: ')
-        if '.' in pit_number:
-            print('Dots are not supported')
-            continue
-        try:
-            pit_number = int(pit_number) - 1
-        except ValueError:
-            print(f'{pit_number} is not a number')
-            continue
-        if not (0 <= pit_number <= 5):
-            print(f'Pit number {pit_number + 1} is out of bounds')
-            continue
-        if board.is_pit_empty(player, pit_number):
-            print(f'Pit number {pit_number + 1} is empty')
-            continue
-        break
-    return pit_number
-
-
-def swap_players_if_needed(board: Board, player: str) -> str:
-    """
-    :param board: current board
-    :param player: player who played in the last move
-    :return: the player in the next move
-    """
-    if not board.extra_turn:
-        player = 'upper' if player == 'lower' else 'lower'
-    return player
 
 
 if __name__ == '__main__':
