@@ -26,18 +26,19 @@ class Game:
             else:
                 self._current_player = self._upper_player
 
-    def _turn(self):
-        pit_number = self._current_player.turn(self.board.representation())
+    def _turn(self) -> bool:
+        """Run the game and return whether it has ended.
+        :return: whether the game has ended
+        """
+        self._swap_players_if_needed()
+        pit_number = self._current_player.turn(self.board)
+        if self.board.move(self._current_player, pit_number):
+            print(self.board)
+            winner = self.board.winner()
+            if winner != 'tie':
+                print('Both players have the same amount of stones, tie.')
+            else:
+                print(f'{winner.capitalize()} won!')
+            return True
 
-        def play():
-            while True:
-                player = swap_players_if_needed(board, player)
-                pit_number = get_player_choice(board, player)
-                if board.move(player, pit_number):
-                    winner = board.winner().capitalize()
-                    if winner != 'tie':
-                        print(f'{winner} won!')
-                    else:
-                        print('Both players have the same amount of stones, tie.')
-                    return
-                print()
+        return False
