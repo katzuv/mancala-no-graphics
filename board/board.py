@@ -1,3 +1,8 @@
+from typing import List
+
+from board.board_representation import BoardRepresentation
+
+
 class Board:
     def __init__(self):
         """Instantiate a Mancala board."""
@@ -37,77 +42,79 @@ class Board:
             return 'lower'
         return 'tie'
 
-    def _deposit(self, player, pit_number):
-        player_pits = self._upper_pits
-        other_pits = self._lower_pits
-        if player == 'lower':
-            player_pits, other_pits = other_pits, player_pits
-        amount = player_pits[pit_number]
+    def _deposit(self, player: str, pit_number: int) -> None:
+        """
+        Deposit the stones in the pits.
+        :param player: current player
+        :param pit_number: the player's choosing
+        """
+        player_pits, other_pits = self.sort_pits(player)
+        amount_to_deposit = player_pits[pit_number]
         player_pits[pit_number] = 0
         all_pits = player_pits + other_pits
         store_addition = 0
         index = pit_number + 1
-        while amount > 0:
+        while amount_to_deposit > 0:
             if index == 6:
                 store_addition += 1
-                amount -= 1
-                if amount == 0:  # If the last stone fell in the player's store, they are granted an additional turn
+                amount_to_deposit -= 1
+                if amount_to_deposit == 0:  # If the last stone fell in the player's store, they are granted an additional turn
                     self.extra_turn = True
-                    break
+                    return
                 else:
                     self.extra_turn = False
-            all_pits[index] += 1
-            index += 1
-            amount -= 1
-            if index == 12:
-                index = 0
+            amount_to_deposit -= 1  # Remove one stone from the available ones
+            all_pits[index] += 1  # Increment the amount of stones in this pit
+            index += 1  # Advance to the next pit
+            if index == 12:  # If completed a cycle,
+                index = 0  # start it again
 
-        self._update_pits(all_pits)
+        self._update_stores(player, store_addition)
+        self._update_pits(player, all_pits)
         player_pits = all_pits[:len(all_pits) // 2]
+        self._handle_last_in_empty(player, index, player_pits)
+        self._update_pits(player, all_pits)
 
+    def _handle_last_in_empty(self, player: str, index: int, player_pits: List[int]):
+        """Handle the rule that if the player drops their last stone in an empty pit on their side, they capture that
+        stone and any stones in the pit directly opposite.
+        :param player: current player
+        :param index: pit index where the last stone was dropped
+        :param player_pits: pits of both players
+        """
         index -= 1
         if 0 <= index <= 5 and player_pits[index] == 1:
-            amount = self._upper_pits[index] + self._lower_pits[index]
+            store_addition = self._upper_pits[index] + self._lower_pits[index]
             self._upper_pits[index] = 0
             self._lower_pits[index] = 0
-            store_addition += amount
+            self._update_stores(player, store_addition)
 
+    def _update_stores(self, player, store_addition):
         if player == 'upper':
             self._upper_store += store_addition
         else:
             self._lower_store += store_addition
-        self._update_pits(all_pits)
-        if player == 'lower':
-            self._upper_pits, self._lower_pits = self._lower_pits, self._upper_pits
 
-    def _update_pits(self, all_pits):
-        self._upper_pits = all_pits[:len(all_pits) // 2]
-        self._lower_pits = all_pits[len(all_pits) // 2:]
+    def sort_pits(self, player):
+        """Sort the pits before each round (if the current player is the upper one, upper pits are returned first)"""
+        if player == 'upper':
+            return self._upper_pits, self._lower_pits
+        return self._lower_pits, self._upper_pits
+
+    def _update_pits(self, player: str, all_pits: List[int]):
+        player_pits = all_pits[:len(all_pits) // 2]
+        other_pits = all_pits[len(all_pits) // 2:]
+        if player == 'upper':
+            self._upper_pits = player_pits
+            self._lower_pits = other_pits
+        else:
+            self._upper_pits = other_pits
+            self._lower_pits = player_pits
 
     def is_pit_empty(self, player: str, pit_number: int) -> bool:
         pits = self._upper_pits if player == 'upper' else self._lower_pits
         return pits[pit_number] == 0
 
-    def representation(self):
-        pass
-
-
-def play():
-    board = Board()
-    player = 'lower'
-    while True:
-        player = swap_players_if_needed(board, player)
-        pit_number = get_player_choice(board, player)
-        if board.move(player, pit_number):
-            winner = board.winner().capitalize()
-            if winner != 'tie':
-                print(f'{winner} won!')
-            else:
-                print('Both players have the same amount of stones, tie.')
-            return
-        print()
-
-
-
-if __name__ == '__main__':
-    play()
+    def representation(self) -> BoardRepresentation:
+        """Return a representation of the board for the players."""
+        return BoardRepresentation(self._upper_pits, self._lower_pits)
