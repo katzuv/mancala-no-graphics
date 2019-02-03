@@ -3,11 +3,15 @@ from board.board import Board
 
 class Game:
 
-    def __init__(self, upper_player_type: type, lower_player_type: type):
+    def __init__(self, upper_player_type, lower_player_type):
+        """Instantiate a Mancala game.
+        :param upper_player_type: type of the upper player
+        :param lower_player_type: type of the lower player
+        """
         self.board = Board()
 
-        self._upper_player = upper_player_type()
-        self._lower_player = lower_player_type()
+        self._upper_player = upper_player_type('upper')
+        self._lower_player = lower_player_type('lower')
 
         self._current_player = self._upper_player
 
