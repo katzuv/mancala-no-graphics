@@ -9,7 +9,7 @@ class Human(PlayerBase):
         :return: choice of pit number
         """
         while True:
-            print(board)
+            print(f'\n{board}')
             pit_number = input(f'{self.side.capitalize()} player, enter pit number: ')
             if '.' in pit_number:
                 print('Dots are not supported')

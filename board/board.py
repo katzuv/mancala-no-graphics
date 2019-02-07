@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 from board.board_representation import BoardRepresentation
 
@@ -29,8 +29,8 @@ class Board:
             return True
         return all(pit == 0 for pit in self._lower_pits)
 
-    def move(self, player, pit_number):
-        self._deposit(player, pit_number)
+    def move(self, player_side: str, pit_number: int):
+        self._deposit(player_side, pit_number)
         return self._is_game_over()
 
     def winner(self):
@@ -42,13 +42,13 @@ class Board:
             return 'lower'
         return 'tie'
 
-    def _deposit(self, player: str, pit_number: int) -> None:
+    def _deposit(self, player_side: str, pit_number: int) -> None:
         """
         Deposit the stones in the pits.
-        :param player: current player
+        :param player_side: current player's side
         :param pit_number: the player's choosing
         """
-        player_pits, other_pits = self.sort_pits(player)
+        player_pits, other_pits = self.sort_pits(player_side)
         amount_to_deposit = player_pits[pit_number]
         player_pits[pit_number] = 0
         all_pits = player_pits + other_pits
@@ -69,16 +69,16 @@ class Board:
             if index == 12:  # If completed a cycle,
                 index = 0  # start it again
 
-        self._update_stores(player, store_addition)
-        self._update_pits(player, all_pits)
+        self._update_stores(player_side, store_addition)
+        self._update_pits(player_side, all_pits)
         player_pits = all_pits[:len(all_pits) // 2]
-        self._handle_last_in_empty(player, index, player_pits)
-        self._update_pits(player, all_pits)
+        self._handle_last_in_empty(player_side, index, player_pits)
+        self._update_pits(player_side, all_pits)
 
-    def _handle_last_in_empty(self, player: str, index: int, player_pits: List[int]):
+    def _handle_last_in_empty(self, player_side: str, index: int, player_pits: List[int]) -> None:
         """Handle the rule that if the player drops their last stone in an empty pit on their side, they capture that
         stone and any stones in the pit directly opposite.
-        :param player: current player
+        :param player_side: current player
         :param index: pit index where the last stone was dropped
         :param player_pits: pits of both players
         """
@@ -87,32 +87,32 @@ class Board:
             store_addition = self._upper_pits[index] + self._lower_pits[index]
             self._upper_pits[index] = 0
             self._lower_pits[index] = 0
-            self._update_stores(player, store_addition)
+            self._update_stores(player_side, store_addition)
 
-    def _update_stores(self, player, store_addition):
-        if player == 'upper':
+    def _update_stores(self, player_side: str, store_addition) -> None:
+        if player_side == 'upper':
             self._upper_store += store_addition
         else:
             self._lower_store += store_addition
 
-    def sort_pits(self, player):
+    def sort_pits(self, player_side) -> Tuple[List[int], List[int]]:
         """Sort the pits before each round (if the current player is the upper one, upper pits are returned first)"""
-        if player == 'upper':
+        if player_side == 'upper':
             return self._upper_pits, self._lower_pits
         return self._lower_pits, self._upper_pits
 
-    def _update_pits(self, player: str, all_pits: List[int]):
+    def _update_pits(self, player_side: str, all_pits: List[int]):
         player_pits = all_pits[:len(all_pits) // 2]
         other_pits = all_pits[len(all_pits) // 2:]
-        if player == 'upper':
+        if player_side == 'upper':
             self._upper_pits = player_pits
             self._lower_pits = other_pits
         else:
             self._upper_pits = other_pits
             self._lower_pits = player_pits
 
-    def is_pit_empty(self, player: str, pit_number: int) -> bool:
-        pits = self._upper_pits if player == 'upper' else self._lower_pits
+    def is_pit_empty(self, player_side: str, pit_number: int) -> bool:
+        pits = self._upper_pits if player_side == 'upper' else self._lower_pits
         return pits[pit_number] == 0
 
     def representation(self) -> BoardRepresentation:

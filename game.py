@@ -34,15 +34,18 @@ class Game:
         """Run the game and return whether it has ended.
         :return: whether the game has ended
         """
-        self._swap_players_if_needed()
         pit_number = self._current_player.turn(self.board)
-        if self.board.move(self._current_player, pit_number):
-            print(self.board)
-            winner = self.board.winner()
-            if winner != 'tie':
-                print('Both players have the same amount of stones, tie.')
-            else:
-                print(f'{winner.capitalize()} won!')
+        if self.board.move(self._current_player.side, pit_number):
+            self._handle_endgame()
             return True
+        self._swap_players_if_needed()
 
         return False
+
+    def _handle_endgame(self):
+        print(self.board)
+        winner = self.board.winner()
+        if winner != 'tie':
+            print('Both players have the same amount of stones, tie.')
+        else:
+            print(f'{winner.capitalize()} won!')
