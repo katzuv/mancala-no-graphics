@@ -45,6 +45,6 @@ class Game:
         print(self.board)
         winner = self.board.winner()
         if winner != 'tie':
-            print('Both players have the same amount of stones, tie.')
+            print(f'{winner.capitalize()} player won!')
         else:
-            print(f'{winner.capitalize()} won!')
+            print('Both players have the same amount of stones, tie.')
