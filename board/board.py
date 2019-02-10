@@ -51,27 +51,23 @@ class Board:
         player_pits, other_pits = self.sort_pits(player_side)
         amount_to_deposit = player_pits[pit_number]
         player_pits[pit_number] = 0
-        all_pits = player_pits + other_pits
-        store_addition = 0
+        all_pits = player_pits + [0] + other_pits
         index = pit_number + 1
         while amount_to_deposit > 0:
-            if index == 6:
-                store_addition += 1
-                amount_to_deposit -= 1
-                if amount_to_deposit == 0:  # If the last stone fell in the player's store, they are granted an additional turn
-                    self.extra_turn = True
-                    return
-                else:
-                    self.extra_turn = False
-            amount_to_deposit -= 1  # Remove one stone from the available ones
+            amount_to_deposit -= 1
             all_pits[index] += 1  # Increment the amount of stones in this pit
             index += 1  # Advance to the next pit
             if index == 12:  # If completed a cycle,
                 index = 0  # start it again
 
-        self._update_stores(player_side, store_addition)
+        if index == 7:  # If the last stone fell in the store, give the player an extra turn
+            self.extra_turn = True
+        else:
+            self.extra_turn = False
+        self._update_stores(player_side, all_pits[6])
+        all_pits = all_pits[:6] + all_pits[7:]  # Remove the store from the list of pits
         self._update_pits(player_side, all_pits)
-        player_pits = all_pits[:len(all_pits) // 2]
+        player_pits = all_pits[:6]
         self._handle_last_in_empty(player_side, index, player_pits)
         self._update_pits(player_side, all_pits)
 
