@@ -35,13 +35,14 @@ class Game:
         """
         pit_number = self._current_player.turn(self.board)
         if self.board.move(self._current_player.side, pit_number):
-            self._handle_endgame()
+            self._print_winner_or_tie()
             return True
         self._swap_players_if_needed()
 
         return False
 
-    def _handle_endgame(self):
+    def _print_winner_or_tie(self):
+        """Print the side of the winner or tie if a tie occured."""
         print(self.board)
         winner = self.board.winner()
         if winner != 'tie':
