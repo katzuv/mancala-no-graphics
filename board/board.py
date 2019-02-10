@@ -69,7 +69,6 @@ class Board:
         self._update_pits(player_side, all_pits)
         player_pits = all_pits[:6]
         self._handle_last_in_empty(player_side, index, player_pits)
-        self._update_pits(player_side, all_pits)
 
     def _handle_last_in_empty(self, player_side: str, index: int, player_pits: List[int]) -> None:
         """Handle the rule that if the player drops their last stone in an empty pit on their side, they capture that
