@@ -20,7 +20,6 @@ class Game:
         while True:
             if self._turn():
                 return
-            self._swap_players_if_needed()
 
     def _swap_players_if_needed(self) -> None:
         """Swap the players if the board indicates it is needed."""
