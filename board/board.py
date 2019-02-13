@@ -25,9 +25,7 @@ class Board:
         """
         :return: whether the game has ended
         """
-        if all(pit == 0 for pit in self._upper_pits):
-            return True
-        return all(pit == 0 for pit in self._lower_pits)
+        return all(pit == 0 for pit in self._upper_pits) or all(pit == 0 for pit in self._lower_pits)
 
     def move(self, player_side: str, pit_number: int):
         self._deposit(player_side, pit_number)
