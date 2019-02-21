@@ -42,7 +42,7 @@ class Game:
         return False
 
     def _print_winner_or_tie(self):
-        """Print the side of the winner or tie if a tie occured."""
+        """Print the side of the winner or tie if a tie occurred."""
         print(self.board)
         winner = self.board.winner()
         if winner != 'tie':
