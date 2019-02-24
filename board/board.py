@@ -55,7 +55,7 @@ class Board:
             amount_to_deposit -= 1
             all_pits[index] += 1  # Increment the amount of stones in this pit
             index += 1  # Advance to the next pit
-            if index == 12:  # If completed a cycle,
+            if index == 13:  # If completed a cycle,
                 index = 0  # start it again
 
         if index == 7:  # If the last stone fell in the store, give the player an extra turn
