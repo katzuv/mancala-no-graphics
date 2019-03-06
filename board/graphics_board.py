@@ -40,15 +40,15 @@ class GraphicsBoard(GridLayout):
 
     def _initialize_pits(self):
         """Insert the stores and pits in the board."""
-        self.up_store = Pit(0, 0, self, '..\\images\\store.png')
-        self.add_widget(self.up_store)
+        self.upper_store = Pit(0, 0, self, 0, '..\\images\\store.png')
+        self.add_widget(self.upper_store)
 
         self.upper_pits = []
         self.lower_pits = []
         for column in range(1, self.cols):
-            self.upper_pits.append(Pit(0, column, self))
+            self.upper_pits.append(Pit(0, column, self, 4))
         for column in range(self.cols - 1):
-            self.lower_pits.append(Pit(1, column, self))
+            self.lower_pits.append(Pit(1, column, self, 4))
 
         for pit in self.upper_pits + self.lower_pits:
             self.add_widget(pit)
