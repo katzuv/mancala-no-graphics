@@ -1,10 +1,10 @@
+from typing import List
+
 from kivy.app import App
 from kivy.config import Config
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
-
-from board import Board
 
 
 class Pit(ButtonBehavior, Image):
