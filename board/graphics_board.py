@@ -8,8 +8,7 @@ from kivy.uix.image import Image
 
 
 class Pit(ButtonBehavior, Image):
-    def __init__(self, row: int, column: int, board,
-                 source='..\\images\\pit.png'):
+    def __init__(self, row: int, column: int, board, amount: int, source='..\\images\\pit.png'):
         """
         Instantiate a pit.
         :param row: line of the pit
@@ -24,7 +23,7 @@ class Pit(ButtonBehavior, Image):
         self.column = column
         self.source = source
         self.board = board
-        self.amount = 4
+        self.amount = amount
 
     def on_press(self):
         raise NotImplementedError
