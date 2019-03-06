@@ -1,6 +1,7 @@
 from typing import List, Tuple
 
 from board.board_representation import BoardRepresentation
+from board.graphics_board import GraphicsBoard
 
 
 class Board:
@@ -11,6 +12,7 @@ class Board:
         self._upper_store = 0
         self._lower_store = 0
         self.extra_turn = False
+        self.graphics_board = GraphicsBoard()
 
     def __str__(self) -> str:
         """
