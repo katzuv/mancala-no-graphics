@@ -32,9 +32,8 @@ class Pit(ButtonBehavior, Image):
 class GraphicsBoard(GridLayout):
     """Class representing the board, with the graphics."""
 
-    def __init__(self, board: Board):
+    def __init__(self):
         super(GraphicsBoard, self).__init__()
-        self.board = board
         self.rows = 2
         self.cols = 8
         self._initialize_pits()
