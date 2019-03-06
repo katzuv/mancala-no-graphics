@@ -84,8 +84,7 @@ class GraphicsBoard(GridLayout):
 class Mancala(App):
     def build(self):
         self.title = 'Mancala'
-        board = Board()
-        return GraphicsBoard(board)
+        return GraphicsBoard()
 
 
 if __name__ == '__main__':
