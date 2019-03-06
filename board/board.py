@@ -31,6 +31,7 @@ class Board:
 
     def move(self, player_side: str, pit_number: int):
         self._deposit(player_side, pit_number)
+        self.graphics_board.update(self._upper_pits[:], self._lower_pits[:], self._upper_store, self._lower_store)
         return self._is_game_over()
 
     def winner(self):

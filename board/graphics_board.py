@@ -53,8 +53,16 @@ class GraphicsBoard(GridLayout):
         for pit in self.upper_pits + self.lower_pits:
             self.add_widget(pit)
 
-        self.down_store = Pit(1, self.cols, self, '..\\images\\store.png')
-        self.add_widget(self.down_store)
+        self.lower_store = Pit(1, self.cols, self, 0, '..\\images\\store.png')
+        self.add_widget(self.lower_store)
+
+    def update(self, upper_pits: List[int], lower_pits: List[int], upper_store: int, lower_store: int):
+        for pit, updated_amount in zip(self.upper_pits, upper_pits):
+            pit.amount = updated_amount
+        for pit, updated_amount in zip(self.upper_pits, lower_pits):
+            pit.amount = updated_amount
+        self.upper_store.amount = upper_store
+        self.lower_store.amount = lower_store
 
     def _has_game_ended(self):
         """
