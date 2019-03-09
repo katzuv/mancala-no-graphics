@@ -1,32 +1,13 @@
+import time
 from typing import List
 
 from kivy.app import App
 from kivy.config import Config
-from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.image import Image
+from kivy.uix.label import Label
 
-
-class Pit(ButtonBehavior, Image):
-    def __init__(self, row: int, column: int, board, amount: int, source='..\\images\\pit.png'):
-        """
-        Instantiate a pit.
-        :param row: line of the pit
-        :type row: int
-        :param column: column of the pit
-        :type column: int
-        :param board: the board which the pit is in
-        :type board: Board
-        """
-        super().__init__()
-        self.row = row
-        self.column = column
-        self.source = source
-        self.board = board
-        self.amount = amount
-
-    def on_press(self):
-        raise NotImplementedError
+from board.holes.pit import Pit
+from board.holes.store import Store
 
 
 class GraphicsBoard(GridLayout):
@@ -36,24 +17,25 @@ class GraphicsBoard(GridLayout):
         super(GraphicsBoard, self).__init__()
         self.rows = 2
         self.cols = 8
-        self._initialize_pits()
+        self.info_label = Label(text='Welcome!')
+        self._initialize_holes()
 
-    def _initialize_pits(self):
+    def _initialize_holes(self):
         """Insert the stores and pits in the board."""
-        self.upper_store = Pit(0, 0, self, 0, '..\\images\\store.png')
+        self.upper_store = Store(0, 0, 0, 'upper')
         self.add_widget(self.upper_store)
 
         self.upper_pits = []
         self.lower_pits = []
         for column in range(1, self.cols):
-            self.upper_pits.append(Pit(0, column, self, 4))
+            self.upper_pits.append(Pit(0, column, 4, 'upper'))
         for column in range(self.cols - 1):
-            self.lower_pits.append(Pit(1, column, self, 4))
+            self.lower_pits.append(Pit(1, column, 4, 'lower'))
 
         for pit in self.upper_pits + self.lower_pits:
             self.add_widget(pit)
 
-        self.lower_store = Pit(1, self.cols, self, 0, '..\\images\\store.png')
+        self.lower_store = Store(1, self.cols, 0, 'lower')
         self.add_widget(self.lower_store)
 
     def update(self, upper_pits: List[int], lower_pits: List[int], upper_store: int, lower_store: int):
@@ -64,21 +46,25 @@ class GraphicsBoard(GridLayout):
         self.upper_store.amount = upper_store
         self.lower_store.amount = lower_store
 
-    def _has_game_ended(self):
-        """
-        Return whether the game has ended. The game ends when all pits of one player are empty.
-        :return: whether the game has ended
-        :rtype: bool
-        """
-        for pit in self.upper_pits:
-            if pit.amount != 0:
-                break
-        else:
-            return True
-        for pit in self.lower_pits:
-            if pit.amount != 0:
-                return False
-        return True
+    def get_press(self):
+        all_pits = self.upper_pits + self.lower_pits
+
+        for pit in all_pits:
+            pit.enable_press()
+
+        was_pressed = False
+        while not was_pressed:
+            for pit in all_pits:
+                if pit.is_pressed:
+                    pressed_pit_side = pit.side
+                    pressed_pit_number = pit.column
+                    break
+            time.sleep(0.01)
+
+        for pit in all_pits:
+            pit.disable_press()
+
+        return pressed_pit_side, pressed_pit_number
 
 
 class Mancala(App):

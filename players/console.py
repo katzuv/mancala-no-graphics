@@ -2,7 +2,7 @@ from board.board_representation import BoardRepresentation
 from players.player_base import PlayerBase
 
 
-class Human(PlayerBase):
+class Console(PlayerBase):
     def turn(self, board: BoardRepresentation) -> int:
         """Get the human player's choice.
         :param board: current board

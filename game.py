@@ -3,17 +3,16 @@ from board.board import Board
 
 class Game:
 
-    def __init__(self, upper_player_type, lower_player_type):
-        """Instantiate a Mancala game.
-        :param upper_player_type: type of the upper player
-        :param lower_player_type: type of the lower player
-        """
+    def __init__(self, upper_player, lower_player, mancala):
+        """Instantiate a Mancala game."""
         self.board = Board()
 
-        self._upper_player = upper_player_type('upper')
-        self._lower_player = lower_player_type('lower')
+        self._upper_player = upper_player
+        self._lower_player = lower_player
 
         self._current_player = self._upper_player
+
+        self.mancala = mancala
 
     def play(self) -> None:
         """Play the game."""

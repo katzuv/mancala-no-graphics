@@ -1,2 +1,2 @@
 from .ai import AI
-from .human import Human
+from .console import Console

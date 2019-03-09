@@ -1,19 +1,18 @@
 from game import Game
-from players import AI, Human
+from mancala import Mancala
+from players import AI, Console
+from players.graphics import Graphics
 
 
 def main():
     """Main function running the game."""
-    while True:
-        print('Welcome to Mancala!\n')
-        game = Game(player_type_chooser('upper'), player_type_chooser('lower'))
-        game.play()
-        if input("Would you like to play again? Enter 'Y' if yes, anything else if not: ").upper() != 'Y':
-            print('Thanks for playing! Hope you enjoyed, see you next time :-)')
-            return
+    mancala = Mancala()
+    print('Welcome to Mancala!\n')
+    game = Game(player_type_chooser(mancala, 'upper'), player_type_chooser(mancala, 'lower'), mancala)
+    game.play()
 
 
-def player_type_chooser(player_side: str):
+def player_type_chooser(mancala: Mancala, player_side: str):
     """Return the type of a player.
     :return: the type chosen of a player
     """
@@ -21,12 +20,15 @@ def player_type_chooser(player_side: str):
         player_type = input(
             f'Enter the type of the {player_side} player: 1 for Human or 3 for AI: ')
         if player_type == '1':
-            return Human
+            return Console(player_side)
         if player_type == '2':
-            return AI
+            return AI(player_side)
+        if player_type == '3':
+            return Graphics(player_side, mancala.board)
         else:
             print('You did not enter a valid number')
 
 
 if __name__ == '__main__':
     main()
+
