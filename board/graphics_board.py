@@ -1,11 +1,11 @@
 import time
-from typing import List
 
 from kivy.app import App
 from kivy.config import Config
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 
+from board.board import Board
 from board.holes.pit import Pit
 from board.holes.store import Store
 
@@ -18,19 +18,26 @@ class GraphicsBoard(GridLayout):
         self.rows = 2
         self.cols = 8
         self.info_label = Label(text='Welcome!')
-        self._initialize_holes()
+        self.board = Board()
+        # self._initialize_board()
+        self.pit = Pit(0, 0, 4, 'upper', True, self.board)
+        # self.add_widget(Label(text='h'))    #, pos=self.pit.pos))
+        self.add_widget(self.pit)
 
-    def _initialize_holes(self):
+    def _initialize_board(self):
         """Insert the stores and pits in the board."""
         self.upper_store = Store(0, 0, 0, 'upper')
         self.add_widget(self.upper_store)
 
         self.upper_pits = []
+        self.upper_labels = []
         self.lower_pits = []
+        self.lower_labels = []
         for column in range(1, self.cols):
-            self.upper_pits.append(Pit(0, column, 4, 'upper'))
+            self.upper_pits.append(Pit(0, column, 4, 'upper', True, self.board))
+            self.upper_labels.append(Label(text='h', pos=self.pit.pos))
         for column in range(self.cols - 1):
-            self.lower_pits.append(Pit(1, column, 4, 'lower'))
+            self.lower_pits.append(Pit(1, column, 4, 'lower', False, self.board))
 
         for pit in self.upper_pits + self.lower_pits:
             self.add_widget(pit)
@@ -38,13 +45,13 @@ class GraphicsBoard(GridLayout):
         self.lower_store = Store(1, self.cols, 0, 'lower')
         self.add_widget(self.lower_store)
 
-    def update(self, upper_pits: List[int], lower_pits: List[int], upper_store: int, lower_store: int):
-        for pit, updated_amount in zip(self.upper_pits, upper_pits):
+    def update(self, board):
+        for pit, updated_amount in zip(self.upper_pits, board.upper_pits):
             pit.amount = updated_amount
-        for pit, updated_amount in zip(self.upper_pits, lower_pits):
+        for pit, updated_amount in zip(self.upper_pits, board.lower_pits):
             pit.amount = updated_amount
-        self.upper_store.amount = upper_store
-        self.lower_store.amount = lower_store
+        self.upper_store.amount = board.upper_store
+        self.lower_store.amount = board.lower_store
 
     def get_press(self):
         all_pits = self.upper_pits + self.lower_pits

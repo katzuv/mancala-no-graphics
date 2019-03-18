@@ -1,18 +1,19 @@
 from typing import List, Tuple
 
 from board.board_representation import BoardRepresentation
-from board.graphics_board import GraphicsBoard
+from players import AI
 
 
 class Board:
     def __init__(self):
         """Instantiate a Mancala board."""
+        self.ai_player = self.ai_player = AI('lower')
         self._upper_pits = [4] * 6
         self._lower_pits = [4] * 6
         self._upper_store = 0
         self._lower_store = 0
         self.extra_turn = False
-        self.graphics_board = GraphicsBoard()
+        self._current_player = 'upper'
 
     def __str__(self) -> str:
         """
@@ -29,9 +30,18 @@ class Board:
         """
         return all(pit == 0 for pit in self._upper_pits) or all(pit == 0 for pit in self._lower_pits)
 
+    @property
+    def current_player(self):
+
+        return
+
     def move(self, player_side: str, pit_number: int):
+        """Make a move and return whether the match is over.
+        :param player_side: which player plays now
+        :param pit_number: last pit number the player took stones from
+        :return: whether the match is over
+        """
         self._deposit(player_side, pit_number)
-        self.graphics_board.update(self._upper_pits[:], self._lower_pits[:], self._upper_store, self._lower_store)
         return self._is_game_over()
 
     def winner(self):
@@ -65,6 +75,7 @@ class Board:
             self.extra_turn = True
         else:
             self.extra_turn = False
+            self._current_player = 'upper' if self._current_player == 'lower' else 'lower'
         self._update_stores(player_side, all_pits[6])
         all_pits = all_pits[:6] + all_pits[7:]  # Remove the store from the list of pits
         self._update_pits(player_side, all_pits)
@@ -113,4 +124,4 @@ class Board:
 
     def representation(self) -> BoardRepresentation:
         """Return a representation of the board for the players."""
-        return BoardRepresentation(self._upper_pits, self._lower_pits)
+        return BoardRepresentation(self._upper_pits, self._lower_pits, self._upper_store, self._lower_store)

@@ -16,3 +16,7 @@ class Mancala(App):
     def build_config(self, config):
         Config.set('graphics', 'window_state', 'maximized')
         Config.set('kivy', 'exit_on_escape', '1')
+
+
+if __name__ == '__main__':
+    Mancala().run()

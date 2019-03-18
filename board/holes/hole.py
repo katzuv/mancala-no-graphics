@@ -1,7 +1,7 @@
-from kivy.uix.image import Image
+from kivy.uix.label import Label
 
 
-class Hole(Image):
+class Hole(Label):
     def __init__(self, row: int, column: int, amount: int, side: str, image_path: str):
         """Instantiate a hole.
         :param row: line of the hole
@@ -14,4 +14,4 @@ class Hole(Image):
         self.column = column
         self.amount = amount
         self.side = side
-        self.source = image_path
+        self.text = '0'
