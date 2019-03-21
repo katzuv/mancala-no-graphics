@@ -2,7 +2,7 @@ from kivy.uix.label import Label
 
 
 class Hole(Label):
-    def __init__(self, row: int, column: int, amount: int, side: str, image_path: str):
+    def __init__(self, row: int, column: int, side: str):
         """Instantiate a hole.
         :param row: line of the hole
         :param column: column of the hole
@@ -12,6 +12,10 @@ class Hole(Label):
         super().__init__()
         self.row = row
         self.column = column
-        self.amount = amount
         self.side = side
-        self.text = '0'
+
+    def update(self, updated_amount: int):
+        """Update the text of the hole
+        :param updated_amount: the amount to update
+        """
+        self.text = str(updated_amount)

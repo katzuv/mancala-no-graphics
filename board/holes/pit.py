@@ -6,19 +6,15 @@ from board.board import Board
 from board.holes.hole import Hole
 
 
-class Pit(Hole, ButtonBehavior):
-    def __init__(self, row: int, column: int, amount: int, side: str, is_pressable: bool, board: Board):
-        super().__init__(row, column, amount, side, 'images/pit.png')
+class Pit(ButtonBehavior, Hole):
+    def __init__(self, row: int, column: int, amount: int, side: str, is_pressable: bool, board: Board, **kwargs):
+        super().__init__(row=row, column=column, amount=amount, side=side, **kwargs)
         self.board = board
+        self.text = str(amount)
         self._is_pressable = is_pressable
 
-    @property
-    def is_pressed(self):
-        return self._is_pressed
-
     def on_press(self):
-        print(0)
-        if self._is_pressable:
+        if not self._is_pressable:
             return
         if self.amount == 0:
             logging.error("pit is empty")

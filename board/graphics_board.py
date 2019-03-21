@@ -1,5 +1,3 @@
-import time
-
 from kivy.app import App
 from kivy.config import Config
 from kivy.uix.gridlayout import GridLayout
@@ -19,10 +17,7 @@ class GraphicsBoard(GridLayout):
         self.cols = 8
         self.info_label = Label(text='Welcome!')
         self.board = Board()
-        # self._initialize_board()
-        self.pit = Pit(0, 0, 4, 'upper', True, self.board)
-        # self.add_widget(Label(text='h'))    #, pos=self.pit.pos))
-        self.add_widget(self.pit)
+        self._initialize_board()
 
     def _initialize_board(self):
         """Insert the stores and pits in the board."""
@@ -35,7 +30,6 @@ class GraphicsBoard(GridLayout):
         self.lower_labels = []
         for column in range(1, self.cols):
             self.upper_pits.append(Pit(0, column, 4, 'upper', True, self.board))
-            self.upper_labels.append(Label(text='h', pos=self.pit.pos))
         for column in range(self.cols - 1):
             self.lower_pits.append(Pit(1, column, 4, 'lower', False, self.board))
 
@@ -47,31 +41,11 @@ class GraphicsBoard(GridLayout):
 
     def update(self, board):
         for pit, updated_amount in zip(self.upper_pits, board.upper_pits):
-            pit.amount = updated_amount
+            pit.update(updated_amount)
         for pit, updated_amount in zip(self.upper_pits, board.lower_pits):
-            pit.amount = updated_amount
-        self.upper_store.amount = board.upper_store
-        self.lower_store.amount = board.lower_store
-
-    def get_press(self):
-        all_pits = self.upper_pits + self.lower_pits
-
-        for pit in all_pits:
-            pit.enable_press()
-
-        was_pressed = False
-        while not was_pressed:
-            for pit in all_pits:
-                if pit.is_pressed:
-                    pressed_pit_side = pit.side
-                    pressed_pit_number = pit.column
-                    break
-            time.sleep(0.01)
-
-        for pit in all_pits:
-            pit.disable_press()
-
-        return pressed_pit_side, pressed_pit_number
+            pit.update(updated_amount)
+        self.upper_store.update(board.upper_store)
+        self.lower_store.update(board.lower_store)
 
 
 class Mancala(App):
