@@ -3,7 +3,7 @@ from board.board import Board
 
 class Game:
 
-    def __init__(self, upper_player, lower_player, mancala):
+    def __init__(self, upper_player, lower_player):
         """Instantiate a Mancala game."""
         self.board = Board()
 
@@ -11,8 +11,6 @@ class Game:
         self._lower_player = lower_player
 
         self._current_player = self._upper_player
-
-        self.mancala = mancala
 
     def play(self) -> None:
         """Play the game."""
@@ -22,21 +20,17 @@ class Game:
 
     def _swap_players_if_needed(self) -> None:
         """Swap the players if the board indicates it is needed."""
-        if not self.board.extra_turn:
-            if self._current_player == self._upper_player:
-                self._current_player = self._lower_player
-            else:
-                self._current_player = self._upper_player
+        self._current_player = self._upper_player if self.board.current_player == 'upper' else self._lower_player
 
     def _turn(self) -> bool:
         """Run the game and return whether it has ended.
         :return: whether the game has ended
         """
         pit_number = self._current_player.turn(self.board)
-        if self.board.move(self._current_player.side, pit_number):
+        if self.board.move(pit_number):
             self._print_winner_or_tie()
             return True
-        self._swap_players_if_needed()
+        # self._swap_players_if_needed()
 
         return False
 

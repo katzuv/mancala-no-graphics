@@ -6,9 +6,10 @@ from players.graphics import Graphics
 
 def main():
     """Main function running the game."""
-    mancala = Mancala()
+    # mancala = Mancala()
     print('Welcome to Mancala!\n')
-    game = Game(player_type_chooser(mancala, 'upper'), player_type_chooser(mancala, 'lower'), mancala)
+    # game = Game(player_type_chooser(mancala, 'upper'), player_type_chooser(mancala, 'lower'), mancala)
+    game = Game(Console('upper'), Console('lower'))
     game.play()
 
 

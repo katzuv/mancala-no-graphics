@@ -13,7 +13,7 @@ class Board:
         self._upper_store = 0
         self._lower_store = 0
         self.extra_turn = False
-        self._current_player = 'upper'
+        self.current_player = 'upper'
 
     def __str__(self) -> str:
         """
@@ -30,18 +30,16 @@ class Board:
         """
         return all(pit == 0 for pit in self._upper_pits) or all(pit == 0 for pit in self._lower_pits)
 
-    @property
-    def current_player(self):
+    def _swap_players_if_needed(self):
+        if not self.extra_turn:
+            self.current_player = 'lower' if self.current_player == 'upper' else 'upper'
 
-        return
-
-    def move(self, player_side: str, pit_number: int):
+    def move(self, pit_number: int):
         """Make a move and return whether the match is over.
-        :param player_side: which player plays now
         :param pit_number: last pit number the player took stones from
         :return: whether the match is over
         """
-        self._deposit(player_side, pit_number)
+        self._deposit(pit_number)
         return self._is_game_over()
 
     def winner(self):
@@ -53,13 +51,12 @@ class Board:
             return 'lower'
         return 'tie'
 
-    def _deposit(self, player_side: str, pit_number: int) -> None:
+    def _deposit(self, pit_number: int) -> None:
         """
         Deposit the stones in the pits.
-        :param player_side: current player's side
         :param pit_number: the player's choosing
         """
-        player_pits, other_pits = self.sort_pits(player_side)
+        player_pits, other_pits = self.sort_pits()
         amount_to_deposit = player_pits[pit_number]
         player_pits[pit_number] = 0
         all_pits = player_pits + [0] + other_pits
@@ -75,17 +72,16 @@ class Board:
             self.extra_turn = True
         else:
             self.extra_turn = False
-            self._current_player = 'upper' if self._current_player == 'lower' else 'lower'
-        self._update_stores(player_side, all_pits[6])
+        self._update_stores(all_pits[6])
         all_pits = all_pits[:6] + all_pits[7:]  # Remove the store from the list of pits
-        self._update_pits(player_side, all_pits)
+        self._update_pits(all_pits)
         player_pits = all_pits[:6]
-        self._handle_last_in_empty(player_side, index, player_pits)
+        self._handle_last_in_empty(index, player_pits)
+        self._swap_players_if_needed()
 
-    def _handle_last_in_empty(self, player_side: str, index: int, player_pits: List[int]) -> None:
+    def _handle_last_in_empty(self, index: int, player_pits: List[int]) -> None:
         """Handle the rule that if the player drops their last stone in an empty pit on their side, they capture that
         stone and any stones in the pit directly opposite.
-        :param player_side: current player
         :param index: pit index where the last stone was dropped
         :param player_pits: pits of both players
         """
@@ -94,24 +90,24 @@ class Board:
             store_addition = self._upper_pits[index] + self._lower_pits[index]
             self._upper_pits[index] = 0
             self._lower_pits[index] = 0
-            self._update_stores(player_side, store_addition)
+            self._update_stores(store_addition)
 
-    def _update_stores(self, player_side: str, store_addition) -> None:
-        if player_side == 'upper':
+    def _update_stores(self, store_addition) -> None:
+        if self.current_player == 'upper':
             self._upper_store += store_addition
         else:
             self._lower_store += store_addition
 
-    def sort_pits(self, player_side) -> Tuple[List[int], List[int]]:
+    def sort_pits(self) -> Tuple[List[int], List[int]]:
         """Sort the pits before each round (if the current player is the upper one, upper pits are returned first)"""
-        if player_side == 'upper':
+        if self.current_player == 'upper':
             return self._upper_pits, self._lower_pits
         return self._lower_pits, self._upper_pits
 
-    def _update_pits(self, player_side: str, all_pits: List[int]):
+    def _update_pits(self, all_pits: List[int]):
         player_pits = all_pits[:len(all_pits) // 2]
         other_pits = all_pits[len(all_pits) // 2:]
-        if player_side == 'upper':
+        if self.current_player == 'upper':
             self._upper_pits = player_pits
             self._lower_pits = other_pits
         else:

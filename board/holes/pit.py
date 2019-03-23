@@ -1,41 +1,42 @@
 import logging
+import time
 
 from kivy.uix.behaviors import ButtonBehavior
 
-from board.board import Board
 from board.holes.hole import Hole
 
 
 class Pit(ButtonBehavior, Hole):
-    def __init__(self, row: int, column: int, amount: int, side: str, is_pressable: bool, board: Board, **kwargs):
-        super().__init__(row=row, column=column, amount=amount, side=side, **kwargs)
-        self.board = board
-        self.text = str(amount)
-        self._is_pressable = is_pressable
+    def __init__(self, pit_number: int, side: str, **kwargs):
+        super().__init__(side=side, **kwargs)
+        self.text = '4'
+        self.pit_number = pit_number
 
     def on_press(self):
-        if not self._is_pressable:
+        # TODO: Disable all pits when match ends
+        # TODO: Always disable press on lower pits
+        if not self.parent.board.current_player == self.side == 'upper':
+            logging.warning('Not your turn!')
             return
-        if self.amount == 0:
-            logging.error("pit is empty")
+        if int(self.text) < 1:
+            logging.warning(f'Pit number {self.pit_number} is empty')
+            return
+        if self.parent.board.current_player == 'upper':
+            self._turn(self.pit_number)
+            logging.info(f'upper playing: pit number {self.pit_number}')
+        while self.parent.board.current_player == 'lower':
+            lower_choice = self.parent.board.ai_player.turn(self.parent.board.representation())
+            logging.info(f'lower playing: pit number {lower_choice}')
+            self._turn(lower_choice)
 
-        self._turn('upper', self.column)
-        if self.board.current_player == 'lower':
-            self._turn('lower', self.board.ai_player.turn(self.board))
-
-    def _turn(self, side, pit_number):
-        if self.board.move(side, pit_number):
+    def _turn(self, pit_number):
+        if self.parent.board.move(pit_number):
             for pit in self.parent.upper_pits:
-                pit._is_pressable = False
-            winner = self.board.winner()
+                pit.disble_press()
+            winner = self.parent.board.winner()
             if winner == 'tie':
                 logging.info(f'Match ended with a tie.')
             else:
                 logging.info(f'The winner is the {winner} player!')
-        self.parent.update(self.board.representation())
-
-    def enable_press(self):
-        self._is_pressable = True
-
-    def disable_press(self):
-        self._is_pressable = False
+        self.parent.update(self.parent.board.representation())
+        time.sleep(0.5)
