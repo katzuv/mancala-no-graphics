@@ -38,10 +38,9 @@ class Board:
     def move(self, pit_number: int):
         """Make a move and return whether the match is over.
         :param pit_number: last pit number the player took stones from
-        :return: whether the match is over
         """
         self._deposit(pit_number)
-        return self._is_game_over()
+        self.has_match_ended = self._is_match_over()
 
     def winner(self):
         upper_sum = sum(self._upper_pits) + self._upper_store
