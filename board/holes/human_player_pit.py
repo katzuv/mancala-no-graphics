@@ -6,16 +6,15 @@ from kivy.uix.behaviors import ButtonBehavior
 from board.holes.hole import Hole
 
 
-class Pit(ButtonBehavior, Hole):
-    def __init__(self, pit_number: int, side: str, **kwargs):
-        super().__init__(side=side, **kwargs)
+class HumanPlayerPit(ButtonBehavior, Hole):
+    def __init__(self, pit_number: int, **kwargs):
+        super().__init__(side='upper', **kwargs)
         self.text = '4'
         self.pit_number = pit_number
 
     def on_press(self):
         # TODO: Disable all pits when match ends
-        # TODO: Always disable press on lower pits
-        if not self.parent.board.current_player == self.side == 'upper':
+        if not self.parent.board.current_player == 'upper':
             logging.warning('Not your turn!')
             return
         if int(self.text) < 1:
