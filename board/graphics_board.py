@@ -2,6 +2,7 @@ import logging
 
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
+from kivy.uix.widget import Widget
 
 from board.board import Board
 from board.board_representation import BoardRepresentation
@@ -15,7 +16,7 @@ class GraphicsBoard(GridLayout):
     def __init__(self):
         super(GraphicsBoard, self).__init__()
         self.rows = 3
-        self.cols = 7
+        self.cols = 8
         self.info_label = Label(text='Welcome!')
         self.board = Board()
         self._initialize_board()
@@ -23,7 +24,7 @@ class GraphicsBoard(GridLayout):
     def _initialize_board(self):
         """Insert the stores and pits in the board."""
         self.upper_store = Store('upper')
-
+        self.add_widget(Widget())
         self.upper_pits = []
         self.upper_labels = []
         self.lower_pits = []
@@ -42,6 +43,7 @@ class GraphicsBoard(GridLayout):
             self.add_widget(lower_pit)
         self.info_label = Label(font_size='20sp')
         self._update_info_label()
+        self.add_widget(Widget())
         self.add_widget(self.info_label)
 
     def update(self, board: BoardRepresentation):
