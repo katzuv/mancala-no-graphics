@@ -14,7 +14,7 @@ class GraphicsBoard(GridLayout):
 
     def __init__(self):
         super(GraphicsBoard, self).__init__()
-        self.rows = 2
+        self.rows = 3
         self.cols = 7
         self.info_label = Label(text='Welcome!')
         self.board = Board()
@@ -40,6 +40,9 @@ class GraphicsBoard(GridLayout):
 
         for lower_pit in self.lower_pits:
             self.add_widget(lower_pit)
+        self.info_label = Label(font_size='20sp')
+        self._update_info_label()
+        self.add_widget(self.info_label)
 
     def update(self, board: BoardRepresentation):
         logging.info('Updating board')
@@ -49,3 +52,7 @@ class GraphicsBoard(GridLayout):
             pit.update(updated_amount)
         self.upper_store.update(board.upper_store)
         self.lower_store.update(board.lower_store)
+        self._update_info_label()
+
+    def _update_info_label(self):
+        self.info_label.text = f'{100 * " "}{"Human" if self.board.current_player == "upper" else "Computer"} is playing'
