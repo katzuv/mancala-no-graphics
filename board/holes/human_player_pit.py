@@ -20,9 +20,8 @@ class HumanPlayerPit(ButtonBehavior, Hole):
         if int(self.text) < 1:
             logging.warning(f'Pit number {self.pit_number} is empty')
             return
-        if self.parent.board.current_player == 'upper':
-            self._turn(self.pit_number)
-            logging.info(f'upper playing: pit number {self.pit_number}')
+        self._turn(self.pit_number)
+        logging.info(f'upper playing: pit number {self.pit_number}')
         while self.parent.board.current_player == 'lower':
             lower_choice = self.parent.board.ai_player.turn(self.parent.board.representation())
             logging.info(f'lower playing: pit number {lower_choice}')
