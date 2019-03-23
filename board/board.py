@@ -53,11 +53,9 @@ class Board:
                 self._lower_pits[index] = 0
 
     def winner(self):
-        upper_sum = sum(self._upper_pits) + self._upper_store
-        lower_sum = sum(self._lower_pits) + self._lower_store
-        if upper_sum > lower_sum:
+        if self._upper_store > self._lower_store:
             return 'upper'
-        elif lower_sum > upper_sum:
+        elif self._lower_store > self._upper_store:
             return 'lower'
         return 'tie'
 
