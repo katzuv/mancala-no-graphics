@@ -58,12 +58,14 @@ class GraphicsBoard(GridLayout):
 
     def _update_info_label(self):
         if self.board.has_match_ended:
-            winner = self.parent.board.winner()
-            if winner == 'tie':
-                logging.info('Match ended with a tie.')
-                self.info_label.text = 'Match ended with a tie.'
-            else:
-                logging.info(f'The winner is the {winner} player!')
-                self.info_label.text = f'The winner is the {winner} player!'
+            endgame_string = self._endgame_string(self.board.winner())
+            logging.info(endgame_string)
+            self.info_label.text = 100 * ' ' + endgame_string
         else:
             self.info_label.text = f'{100 * " "}{"Human" if self.board.current_player == "upper" else "Computer"} is playing'
+
+    @staticmethod
+    def _endgame_string(winner: str):
+        if winner == 'tie':
+            return 'Match ended with a tie.'
+        return f'The winner is the {winner} player!'
