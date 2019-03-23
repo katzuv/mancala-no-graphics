@@ -41,6 +41,16 @@ class Board:
         """
         self._deposit(pit_number)
         self.has_match_ended = self._is_match_over()
+        self._empty_pits_when_match_ends()
+
+    def _empty_pits_when_match_ends(self):
+        if self.has_match_ended:
+            self._upper_store += sum(self._upper_pits)
+            for index in range(len(self._upper_pits)):
+                self._upper_pits[index] = 0
+            self._lower_store += sum(self._lower_pits)
+            for index in range(len(self._lower_pits)):
+                self._lower_pits[index] = 0
 
     def winner(self):
         upper_sum = sum(self._upper_pits) + self._upper_store
