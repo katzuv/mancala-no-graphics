@@ -29,7 +29,7 @@ class Pit(ButtonBehavior, Hole):
         self._turn(choice)
 
     def _turn(self, pit_number):
-        logging.info(f'{self.side} playing: pit number {self.pit_number}')
+        logging.info(f'{self.side.capitalize()}: pit number {self.pit_number}')
         self.parent.board.move(pit_number)
         self.parent.update(self.parent.board.representation())
         time.sleep(0.25)
