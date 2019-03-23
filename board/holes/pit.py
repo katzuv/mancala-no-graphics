@@ -30,13 +30,6 @@ class Pit(ButtonBehavior, Hole):
 
     def _turn(self, pit_number):
         logging.info(f'{self.side} playing: pit number {self.pit_number}')
-        if self.parent.board.move(pit_number):
-            for pit in self.parent.upper_pits:
-                pit.disble_press()
-            winner = self.parent.board.winner()
-            if winner == 'tie':
-                logging.info(f'Match ended with a tie.')
-            else:
-                logging.info(f'The winner is the {winner} player!')
+        self.parent.board.move(pit_number)
         self.parent.update(self.parent.board.representation())
         time.sleep(0.5)
