@@ -13,9 +13,9 @@ class Pit(ButtonBehavior, Hole):
         self.pit_number = pit_number
 
     def on_press(self):
-        # TODO: Disable all pits when match ends
         if self.parent.board.has_match_ended:
             logging.info('Match has ended')
+            return
         if self.parent.board.current_player != self.side:
             logging.warning('Not your turn!')
             return

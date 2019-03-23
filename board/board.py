@@ -14,6 +14,7 @@ class Board:
         self._lower_store = 0
         self.extra_turn = False
         self.current_player = 'upper'
+        self.has_match_ended = False
 
     def __str__(self) -> str:
         """
@@ -24,9 +25,9 @@ class Board:
         lower_row = '\t '.join(str(pit) for pit in self._lower_pits)
         return f'{numbers_row}\n{upper_row}\n{lower_row}\nUp store: {self._upper_store}, Down store: {self._lower_store}'''
 
-    def _is_game_over(self) -> bool:
+    def _is_match_over(self) -> bool:
         """
-        :return: whether the game has ended
+        :return: whether the match has ended
         """
         return all(pit == 0 for pit in self._upper_pits) or all(pit == 0 for pit in self._lower_pits)
 
