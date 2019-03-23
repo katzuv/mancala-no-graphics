@@ -87,9 +87,9 @@ class Board:
         """
         index -= 1
         if 0 <= index <= 5 and player_pits[index] == 1:
-            store_addition = self._upper_pits[index] + self._lower_pits[index]
+            store_addition = 1 + self._lower_pits[5 - index]
             self._upper_pits[index] = 0
-            self._lower_pits[index] = 0
+            self._lower_pits[5 - index] = 0
             self._update_stores(store_addition)
 
     def _update_stores(self, store_addition) -> None:
