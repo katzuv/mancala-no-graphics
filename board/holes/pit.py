@@ -6,28 +6,30 @@ from kivy.uix.behaviors import ButtonBehavior
 from board.holes.hole import Hole
 
 
-class HumanPlayerPit(ButtonBehavior, Hole):
-    def __init__(self, pit_number: int, **kwargs):
-        super().__init__(side='upper', **kwargs)
+class Pit(ButtonBehavior, Hole):
+    def __init__(self, pit_number: int, side, **kwargs):
+        super().__init__(side=side, **kwargs)
         self.text = '4'
         self.pit_number = pit_number
 
     def on_press(self):
         # TODO: Disable all pits when match ends
-        if not self.parent.board.current_player == 'upper':
+        if self.parent.board.has_match_ended:
+            logging.info('Match has ended')
+        if self.parent.board.current_player != self.side:
             logging.warning('Not your turn!')
             return
-        if int(self.text) < 1:
-            logging.warning(f'Pit number {self.pit_number} is empty')
-            return
-        self._turn(self.pit_number)
-        logging.info(f'upper playing: pit number {self.pit_number}')
-        while self.parent.board.current_player == 'lower':
-            lower_choice = self.parent.board.ai_player.turn(self.parent.board.representation())
-            logging.info(f'lower playing: pit number {lower_choice}')
-            self._turn(lower_choice)
+        if self.side == 'upper':
+            if int(self.text) < 1:
+                logging.warning(f'Pit number {self.pit_number} is empty')
+                return
+            choice = self.pit_number
+        else:
+            choice = self.parent.board.ai_player.turn(self.parent.board.representation())
+        self._turn(choice)
 
     def _turn(self, pit_number):
+        logging.info(f'{self.side} playing: pit number {self.pit_number}')
         if self.parent.board.move(pit_number):
             for pit in self.parent.upper_pits:
                 pit.disble_press()

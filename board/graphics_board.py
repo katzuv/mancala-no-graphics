@@ -5,8 +5,7 @@ from kivy.uix.label import Label
 
 from board.board import Board
 from board.board_representation import BoardRepresentation
-from board.holes.ai_pit import AIPit
-from board.holes.human_player_pit import HumanPlayerPit
+from board.holes.pit import Pit
 from board.holes.store import Store
 
 
@@ -30,14 +29,14 @@ class GraphicsBoard(GridLayout):
         self.lower_pits = []
         self.lower_labels = []
         for pit_number in range(6):
-            self.upper_pits.append(HumanPlayerPit(pit_number))
+            self.upper_pits.append(Pit(pit_number, 'upper'))
         for upper_pit in self.upper_pits:
             self.add_widget(upper_pit)
         self.add_widget(self.upper_store)
         self.lower_store = Store('lower')
         self.add_widget(self.lower_store)
         for pit_number in range(6):
-            self.lower_pits.append(AIPit(5 - pit_number))
+            self.lower_pits.append(Pit(5 - pit_number, 'lower'))
 
         for lower_pit in self.lower_pits:
             self.add_widget(lower_pit)
