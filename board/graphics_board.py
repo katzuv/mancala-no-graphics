@@ -46,7 +46,7 @@ class GraphicsBoard(GridLayout):
         logging.info('Updating board')
         for pit, updated_amount in zip(self.upper_pits, board.upper_pits):
             pit.update(updated_amount)
-        for pit, updated_amount in zip(self.lower_pits, board.lower_pits):
+        for pit, updated_amount in zip(self.lower_pits, reversed(board.lower_pits)):
             pit.update(updated_amount)
         self.upper_store.update(board.upper_store)
         self.lower_store.update(board.lower_store)
