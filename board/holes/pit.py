@@ -16,16 +16,16 @@ class Pit(ButtonBehavior, Hole):
         if self.parent.board.has_match_ended:
             logging.info('Match has ended')
             return
-        if self.parent.board.current_player != self.side:
-            logging.warning('Not your turn!')
-            return
-        if self.side == 'upper':
+        if self.parent.board.current_player == 'lower':
+            choice = self.parent.board.ai_player.turn(self.parent.board.representation())
+        elif self.side == self.parent.board.current_player == 'upper':
             if int(self.text) < 1:
                 logging.warning(f'Pit number {self.pit_number} is empty')
                 return
             choice = self.pit_number
         else:
-            choice = self.parent.board.ai_player.turn(self.parent.board.representation())
+            logging.warning('You pressed in the wrong place')
+            return
         self._turn(choice)
 
     def _turn(self, pit_number):
