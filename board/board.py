@@ -95,10 +95,12 @@ class Board:
         """
         index -= 1
         if 0 <= index <= 5 and player_pits[index] == 1:
-            store_addition = 1 + self._lower_pits[5 - index]
-            self._upper_pits[index] = 0
-            self._lower_pits[5 - index] = 0
+            other_pits = self.sort_pits()[1]
+            store_addition = 1 + other_pits[5 - index]
+            player_pits[index] = 0
+            other_pits[5 - index] = 0
             self._update_stores(store_addition)
+            self._update_pits(player_pits + other_pits)
 
     def _update_stores(self, store_addition) -> None:
         if self.current_player == 'upper':
