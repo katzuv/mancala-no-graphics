@@ -131,3 +131,13 @@ class Board:
     def representation(self) -> BoardRepresentation:
         """Return a representation of the board for the players."""
         return BoardRepresentation(self._upper_pits, self._lower_pits, self._upper_store, self._lower_store)
+
+    def reset(self):
+        self.ai_player = self.ai_player = AI('lower')  # TODO: Check if could be deleted
+        self._upper_pits = [4] * 6
+        self._lower_pits = [4] * 6
+        self._upper_store = 0
+        self._lower_store = 0
+        self.extra_turn = False
+        self.current_player = 'upper'
+        self.has_match_ended = False

@@ -1,5 +1,6 @@
 import logging
 
+from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
@@ -8,6 +9,17 @@ from board.board import Board
 from board.board_representation import BoardRepresentation
 from board.holes.pit import Pit
 from board.holes.store import Store
+
+
+class RematchButton(ButtonBehavior, Label):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.text = 'Click here for another match'
+        self.font_size = '15sp'
+
+    def on_press(self):
+        print(2)
+        self.parent.rematch()
 
 
 class GraphicsBoard(GridLayout):
@@ -56,13 +68,20 @@ class GraphicsBoard(GridLayout):
         self.lower_store.update(board.lower_store)
         self._update_info_label()
 
+    def rematch(self):
+        self.board.reset()
+        self.update(self.board.representation())
+        self.remove_widget(self.rematch_button)
+
     def _update_info_label(self):
         if self.board.has_match_ended:
             endgame_string = self._endgame_string(self.board.winner())
             logging.info(endgame_string)
-            self.info_label.text = 100 * ' ' + endgame_string
+            self.info_label.text = 175 * ' ' + endgame_string
+            self.rematch_button = RematchButton()
+            self.add_widget(self.rematch_button)
         else:
-            self.info_label.text = f'{100 * " "}{"Human" if self.board.current_player == "upper" else "Computer"} is playing'
+            self.info_label.text = f'{175 * " "}{"Human" if self.board.current_player == "upper" else "Computer"} is playing'
 
     @staticmethod
     def _endgame_string(winner: str):
