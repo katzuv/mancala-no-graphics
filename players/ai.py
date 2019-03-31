@@ -9,13 +9,14 @@ class AI(PlayerBase):
     def turn(self, board: BoardRepresentation) -> int:
         pits = [index for index, pit in enumerate(board.lower_pits) if pit > 0]
         last_in_store = [index for index, pit in enumerate(pits) if pit + index == 6]
-        # if last_in_store:
-        #     return random.choice(last_in_store)
+        if last_in_store:
+            return random.choice(last_in_store)
 
         last_in_empty = [index for index in pits if self._causes_last_in_empty(index, board)]
         print(last_in_empty)
         if last_in_empty:
             return random.choice(last_in_empty)
+
         return random.choice([index for index, pit in enumerate(board.lower_pits) if pit > 0])
 
     @staticmethod
@@ -39,10 +40,14 @@ class AI(PlayerBase):
             if index == 13:  # If completed a cycle,
                 index = 0  # start it again
 
-        return 0 <= index <= 5 and all_pits[index] == 1
+        return 0 <= index - 1 <= 5 and all_pits[index - 1] == 1
+
+
+def main():
+    ai = AI('lower')
+    board = BoardRepresentation([0] * 6, [1, 0, 1, 0, 1, 0], 0, 0)
+    ai.turn(board)
 
 
 if __name__ == '__main__':
-    ai = AI('lower')
-    board = BoardRepresentation([0] * 6, [0, 1, 0, 0, 0, 0], 0, 0)
-    ai.turn(board)
+    main()

@@ -21,6 +21,9 @@ class Screen(GridLayout):
         If the last stone you drop falls in an empty pit on your side, you capture that stone and any stones in
         the pit directly opposite.
         
+        There is a text showing which player is the current player. To trigger your move, click on the pit you wish to
+        deposit its stone. To trigger the computer's move, click on any pit in the board. 
+        
         The game ends when all six pits on one side of the board are empty.
         The player who has stones on his side of the board when the game ends captures all of those stones.
         Count all the stones in each store. The winner is the player with the most stones.\n\n\n
